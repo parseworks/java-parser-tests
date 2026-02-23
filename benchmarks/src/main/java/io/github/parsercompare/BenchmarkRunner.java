@@ -25,14 +25,14 @@ public class BenchmarkRunner {
         @Param("placeholder")
         public String parserName;
 
-        public CsvParser parser;
+        public TestParser parser;
         public String csvData;
 
         @Setup(Level.Trial)
         public void setup() {
             csvData = generateCsvData(10000, 10);
-            ServiceLoader<CsvParser> loader = ServiceLoader.load(CsvParser.class);
-            for (CsvParser p : loader) {
+            ServiceLoader<TestParser> loader = ServiceLoader.load(TestParser.class);
+            for (TestParser p : loader) {
                 if (p.getName().equals(parserName)) {
                     parser = p;
                     break;
@@ -46,7 +46,7 @@ public class BenchmarkRunner {
 
     @Benchmark
     public void testParser(ParserState state) {
-        state.parser.parse(state.csvData);
+        state.parser.parseCSV(state.csvData);
     }
 
     private static String generateCsvData(int rows, int cols) {
@@ -70,13 +70,13 @@ public class BenchmarkRunner {
 
     public static void main(String[] args) throws RunnerException {
         List<String> parserNames = new ArrayList<>();
-        ServiceLoader<CsvParser> loader = ServiceLoader.load(CsvParser.class);
-        for (CsvParser parser : loader) {
+        ServiceLoader<TestParser> loader = ServiceLoader.load(TestParser.class);
+        for (TestParser parser : loader) {
             parserNames.add(parser.getName());
         }
 
         if (parserNames.isEmpty()) {
-            throw new IllegalStateException("No CsvParser implementations found!");
+            throw new IllegalStateException("No TestParser implementations found!");
         }
 
         Options opt = new OptionsBuilder()

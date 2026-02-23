@@ -11,7 +11,7 @@ import static com.google.mu.util.CharPredicate.noneOf;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-public class DotCsvParser implements CsvParser {
+public class DotCsvParser implements TestParser {
 
     private static final Parser<?> newLine =
         Stream.of("\n", "\r\n", "\r").map(Parser::string).collect(Parser.or());
@@ -41,7 +41,7 @@ public class DotCsvParser implements CsvParser {
     }
 
     @Override
-    public List<List<String>> parse(String input) {
+    public List<List<String>> parseCSV(String input) {
         try {
             return csv.parse(input);
         } catch (Exception e) {

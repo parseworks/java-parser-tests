@@ -2,7 +2,7 @@ package io.github.parsercompare;
 
 import java.util.List;
 
-public interface CsvParser {
+public interface TestParser {
     String getName();
-    List<List<String>> parse(String input);
+    List<List<String>> parseCSV(String input);
 }

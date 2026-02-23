@@ -10,7 +10,7 @@ import java.util.List;
 import static io.github.parseworks.parsers.Combinators.*;
 import static io.github.parseworks.parsers.Lexical.*;
 
-public class ParseworksCsvParser implements CsvParser {
+public class ParseworksCsvParser implements TestParser {
 
     private static final Parser<Character, Void> newLine = Lexical.oneOf("\r\n").oneOrMore().as(null);
 
@@ -39,7 +39,7 @@ public class ParseworksCsvParser implements CsvParser {
     }
 
     @Override
-    public List<List<String>> parse(String input) {
+    public List<List<String>> parseCSV(String input) {
         return csv.parse(input).value();
     }
 
