@@ -22,7 +22,7 @@ public class BenchmarkRunner {
 
     @State(Scope.Thread)
     public static class ParserState {
-        @Param({"dot-parse", "parseworks"})
+        @Param("placeholder")
         public String parserName;
 
         public CsvParser parser;
@@ -69,8 +69,19 @@ public class BenchmarkRunner {
     }
 
     public static void main(String[] args) throws RunnerException {
+        List<String> parserNames = new ArrayList<>();
+        ServiceLoader<CsvParser> loader = ServiceLoader.load(CsvParser.class);
+        for (CsvParser parser : loader) {
+            parserNames.add(parser.getName());
+        }
+
+        if (parserNames.isEmpty()) {
+            throw new IllegalStateException("No CsvParser implementations found!");
+        }
+
         Options opt = new OptionsBuilder()
                 .include(BenchmarkRunner.class.getSimpleName())
+                .param("parserName", parserNames.toArray(new String[0]))
                 .build();
 
         new Runner(opt).run();
