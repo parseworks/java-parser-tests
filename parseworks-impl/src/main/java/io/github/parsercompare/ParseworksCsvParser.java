@@ -15,21 +15,21 @@ public class ParseworksCsvParser implements TestParser {
     private static final Parser<Character, Void> newLine = Lexical.oneOf("\r\n").oneOrMore().as(null);
 
     private static final Parser<Character, String> quoted =
-        Combinators.isNot('"')
+        isNot('"')
             .or(attempt(string("\"\"")).as('"'))
             .zeroOrMore()
             .map(Lists::join)
             .between('"');
 
     private static final Parser<Character, String> unquoted =
-        not(Lexical.oneOf("\"\r\n,"))
+        not(oneOf("\"\r\n,"))
             .oneOrMore()
             .map(Lists::join)
             .expecting("unquoted field");
 
     private static final Parser<Character, List<String>> line = Combinators.oneOf(
         newLine.as(List.of()),
-        Combinators.oneOf(unquoted, quoted).zeroOrMoreSeparatedBy(chr(',')));
+        oneOf(unquoted, quoted).zeroOrMoreSeparatedBy(chr(',')));
 
     private static final Parser<Character, List<List<String>>> csv = line.zeroOrMoreSeparatedBy(newLine);
 
