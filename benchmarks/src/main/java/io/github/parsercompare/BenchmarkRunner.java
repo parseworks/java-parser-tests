@@ -6,11 +6,16 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -29,7 +34,7 @@ public class BenchmarkRunner {
         public String csvData;
 
         @Setup(Level.Trial)
-        public void setup() {
+        public void setup() throws IOException {
             csvData = generateCsvData(10000, 10);
             ServiceLoader<TestParser> loader = ServiceLoader.load(TestParser.class);
             for (TestParser p : loader) {
@@ -41,6 +46,15 @@ public class BenchmarkRunner {
             if (parser == null) {
                 throw new IllegalStateException("Parser not found: " + parserName);
             }
+
+            // Record output for comparison
+            List<List<String>> result = parser.parseCSV(csvData);
+            String output = result.stream()
+                    .map(line -> String.join(",", line))
+                    .collect(Collectors.joining("\n"));
+            System.out.println("[DEBUG_LOG] Parser: " + parserName + ", Result size: " + (result == null ? "null" : result.size()) + ", Output length: " + output.length());
+            Path outputPath = Paths.get("output_" + parserName + ".txt");
+            Files.writeString(outputPath, output);
         }
     }
 
